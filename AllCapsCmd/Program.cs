@@ -1,43 +1,37 @@
-﻿using NAudio.Wave;
+﻿using AllCaps.Input;
+using AllCaps.Recognition;
+using NAudio.Wave;
 using System;
 using System.Diagnostics;
 using System.Speech.AudioFormat;
 using System.Speech.Recognition;
+using System.Threading.Tasks;
 
 namespace AllCaps
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             using (var capture = new WasapiLoopbackCapture())
             using (var stream = new WaveCaptureStream(capture))
-            using (var resample = new Wave32To16CaptureStream(stream))
-            using (var eng = new SpeechRecognitionEngine())
+            using (ISpeechRecognizer eng = new LocalSpeechRecognizer(stream))
             {
-                eng.LoadGrammar(new DictationGrammar());
                 eng.SpeechRecognized += (snd, evt) =>
                 {
-                    string text = evt.Result.Text;
-                    Console.WriteLine($"{text}");
-                };
-
-                eng.AudioSignalProblemOccurred += (snd, evt) =>
-                {
-                    Debug.WriteLine(evt.AudioSignalProblem);
+                    Console.WriteLine($"{evt.Text}");
                 };
 
                 capture.StartRecording();
-                eng.SetInputToAudioStream(resample, new SpeechAudioFormatInfo(resample.WaveFormat.SampleRate, (AudioBitsPerSample)resample.WaveFormat.BitsPerSample, (AudioChannel)resample.WaveFormat.Channels));
-                eng.RecognizeAsync(RecognizeMode.Multiple);
+                await eng.StartAsync();
+
                 while (true)
                 {
                     Console.ReadLine();
                     break;
                 }
 
-                eng.RecognizeAsyncStop();
-
+                await eng.StopAsync();
                 capture.StopRecording();
             }
         }

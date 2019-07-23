@@ -3,7 +3,7 @@ using NAudio.Wave;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace AllCaps
+namespace AllCaps.Input
 {
     public class WaveCaptureStream : WaveStream
     {
@@ -22,16 +22,6 @@ namespace AllCaps
                     this.buffer.Enqueue(evt.Buffer[x]);
                 }
             };
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            //if (disposing)
-            //{
-            //    this.debugFile.Dispose();
-            //}
-
-            base.Dispose(disposing);
         }
 
         public override WaveFormat WaveFormat => this.capture.WaveFormat;

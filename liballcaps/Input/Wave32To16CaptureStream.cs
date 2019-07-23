@@ -1,16 +1,11 @@
 ﻿using NAudio.Wave;
 
-namespace AllCaps
+namespace AllCaps.Input
 {
     public class Wave32To16CaptureStream : Wave32To16Stream
     {
-        public Wave32To16CaptureStream(WaveCaptureStream stream) : base(stream)
+        public Wave32To16CaptureStream(WaveStream stream) : base(stream)
         {
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
         }
 
         public override WaveFormat WaveFormat => base.WaveFormat;
@@ -25,8 +20,7 @@ namespace AllCaps
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int read = base.Read(buffer, offset, count);
-            return read;
+            return base.Read(buffer, offset, count);
         }
     }
 }
