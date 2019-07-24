@@ -19,7 +19,8 @@ All these solutions require action on the streamer's side and aren't enabled by 
 
 ## Status
 
-- Currently working in a command line app with low confidence (in the text that's generated)
 - Using .NET's [SpeechRecognitionEngine](https://docs.microsoft.com/en-us/dotnet/api/system.speech.recognition.speechrecognitionengine?view=netframework-4.8) which is built in
+- Can use Azure Cognitive Speech APIs if configured with key,region pair
 - Dependency on [NAudio](https://github.com/naudio/NAudio)
+- Using [FontAwesome](https://fontawesome.com/) for icons
 - Works if speakers are muted
