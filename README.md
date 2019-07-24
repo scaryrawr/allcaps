@@ -1,5 +1,7 @@
 # All Caps
 
+[![Build Status](https://scaryrawr.visualstudio.com/AllCaps/_apis/build/status/scaryrawr.allcaps?branchName=master)](https://scaryrawr.visualstudio.com/AllCaps/_build/latest?definitionId=1&branchName=master)
+
 All Caps is a Windows only tool to generate subtitles for audio that is being played on your computer.
 
 ## Why All Caps
