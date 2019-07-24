@@ -19,15 +19,12 @@ namespace ALLCAPS
             this.InitializeComponent();
             this.inProgress = new ConcurrentDictionary<string, ObservableSpeechResult>();
 
-            this.Closed += async (snd, evt) =>
+            this.Closing += async (snd, evt) =>
             {
-                if (this.Recognizer != null)
-                {
-                    await this.Recognizer.StopAsync();
-                    var hndl = this.Recognizer;
-                    this.Recognizer = null;
-                    hndl.Dispose();
-                }
+                await this.Recognizer.StopAsync();
+                var hndl = this.Recognizer;
+                this.Recognizer = null;
+                hndl.Dispose();
             };
 
             this.Recognizer = new LoopbackRecognizer();
@@ -72,25 +69,27 @@ namespace ALLCAPS
                     var temp = evt.Result.Text.Split(' ').Reverse().ToArray();
                     int toTake = Math.Min(4, temp.Length);
                     this.Preview.Text = $"{string.Join(" ", temp.Take(toTake).Reverse())}...";
-                    if (this.inProgress.TryGetValue(evt.ResultId, out var updatable))
+                    ObservableSpeechResult speechResult = null;
+                    if (this.inProgress.TryGetValue(evt.ResultId, out speechResult))
                     {
-                        updatable.Offset = evt.Result.Offset;
-                        updatable.Text = $"{evt.Result.Text}...";
+                        speechResult.Offset = evt.Result.Offset;
+                        speechResult.Text = $"{evt.Result.Text}...";
                     }
                     else
                     {
-                        var newItem = new ObservableSpeechResult
+                        speechResult = new ObservableSpeechResult
                         {
                             Text = $"{evt.Result.Text}...",
                             Offset = evt.Result.Offset
                         };
 
-                        if (this.inProgress.TryAdd(evt.ResultId, newItem))
+                        if (this.inProgress.TryAdd(evt.ResultId, speechResult))
                         {
-                            this.SpeechList.Items.Add(newItem);
-                            this.SpeechList.ScrollIntoView(newItem);
+                            this.SpeechList.Items.Add(speechResult);
                         }
                     }
+
+                    this.SpeechList.ScrollIntoView(speechResult);
                 });
             }
             catch (TaskCanceledException ex)

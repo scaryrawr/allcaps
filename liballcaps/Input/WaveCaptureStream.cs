@@ -60,6 +60,7 @@ namespace AllCaps.Input
             var token = this.cancellationTokenSource.Token;
             int read = count;
             var start = DateTime.Now;
+            for (int x = 0; x < buffer.Length; ++x) { buffer[x] = 0; }
             while (count > 0 && DateTime.Now - start < this.bufferTimeout && !token.IsCancellationRequested)
             {
                 if (this.carry != null)

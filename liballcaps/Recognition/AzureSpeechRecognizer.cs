@@ -90,8 +90,8 @@ namespace AllCaps.Recognition
 
         public async Task StopAsync()
         {
-            await this.recognizer.StopContinuousRecognitionAsync();
             this.cancelTokenSource?.Cancel();
+            await this.recognizer.StopContinuousRecognitionAsync();
 
             if (this.worker != null)
             {
@@ -122,6 +122,8 @@ namespace AllCaps.Recognition
                 if (disposing)
                 {
                     this.recognizer.Dispose();
+                    this.cancelTokenSource?.Cancel();
+                    this.cancelTokenSource?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
