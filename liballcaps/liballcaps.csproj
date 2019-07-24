@@ -81,6 +81,7 @@
     <Compile Include="Recognition\AzureSpeechRecognizer.cs" />
     <Compile Include="Recognition\ISpeechRecognizer.cs" />
     <Compile Include="Recognition\LocalSpeechRecognizer.cs" />
+    <Compile Include="Recognition\LoopbackRecognizer.cs" />
     <Compile Include="Recognition\RecognitionEventArgs.cs" />
     <Compile Include="Recognition\RecognitionResult.cs" />
   </ItemGroup>

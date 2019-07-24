@@ -1,0 +1,3 @@
+os: windows
+language: csharp
+solution: allcaps-ci.sln

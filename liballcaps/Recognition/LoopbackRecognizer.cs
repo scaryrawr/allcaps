@@ -1,11 +1,10 @@
 ﻿using AllCaps.Input;
-using AllCaps.Recognition;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
 using System.Threading.Tasks;
 
-namespace ALLCAPS
+namespace AllCaps.Recognition
 {
     public class LoopbackRecognizer : ISpeechRecognizer
     {

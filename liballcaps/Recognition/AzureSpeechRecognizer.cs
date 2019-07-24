@@ -37,7 +37,10 @@ namespace AllCaps.Recognition
                     this.resultId = Guid.NewGuid().ToString();
                 }
 
-                this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt, id));
+                if (!string.IsNullOrWhiteSpace(evt.Result.Text))
+                {
+                    this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt, id));
+                }
             };
 
             this.recognizer.Recognizing += (snd, evt) =>
