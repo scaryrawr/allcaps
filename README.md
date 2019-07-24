@@ -4,10 +4,6 @@
 
 All Caps is a Windows only tool to generate subtitles for audio that is being played on your computer.
 
-## Microsoft Hackation 2019 Project
-
-All Caps was built during Microsoft's One Week Hackathon, reseach into the project happened prior to the Hackathon, but all coding was done in < 3 days.
-
 ## Why All Caps
 
 Hmmm... so this project is called All Caps as a play on captions and typing in ALL CAPS (angry online typing).
