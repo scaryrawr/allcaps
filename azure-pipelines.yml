@@ -26,11 +26,12 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    
+
 - task: GitHubRelease@0
   inputs:
     gitHubConnection: 'Github Publish'
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'auto'
+    tagSource: 'manual'
+    tag: 'v$(MajorVersion).$(MinorVersion).$(PatchVersion)'
