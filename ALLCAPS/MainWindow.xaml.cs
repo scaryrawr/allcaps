@@ -20,19 +20,14 @@ namespace ALLCAPS
             this.InitializeComponent();
             this.inProgress = new ConcurrentDictionary<string, ObservableSpeechResult>();
 
-            this.Closing += async (snd, evt) =>
+            this.Closing += (snd, evt) =>
             {
-                await this.Recognizer.StopAsync().ConfigureAwait(false);
-                var hndl = this.Recognizer;
-                this.Recognizer = null;
-                hndl.Dispose();
+                this.ClearSpeechRecognizer();
             };
 
-            this.Recognizer = new LoopbackRecognizer();
-            this.RecognizerLabel.Text = this.Recognizer.RecognizerName;
-            this.Loaded += async (snd, evt) =>
+            this.Loaded += (snd, evt) =>
             {
-                await this.Recognizer.StartAsync().ConfigureAwait(false);
+                this.ResetSpeechRecognizer();
             };
         }
 

@@ -18,11 +18,11 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Click="OnPause" FontFamily="{StaticResource FontAwesome}" Content="&#xf04c;" />
-                <Button Click="OnPlay" FontFamily="{StaticResource FontAwesome}" Content="&#xf04b;" />
+                <Button Click="OnPause" Margin="5 5 5 5" FontFamily="{StaticResource FontAwesome}" FontSize="20" Content="&#xf04c;" />
+                <Button Click="OnPlay" Margin="5 5 0 5" FontFamily="{StaticResource FontAwesome}" FontSize="20" Content="&#xf04b;" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Click="LaunchSettings" HorizontalAlignment="Right" FontSize="20" FontFamily="{StaticResource FontAwesome}" Content="&#xf013;" />
+                <Button Click="LaunchSettings" Margin="5 5 5 5" HorizontalAlignment="Right" FontSize="20" FontFamily="{StaticResource FontAwesome}" Content="&#xf013;" />
             </StackPanel>
         </Grid>
         <ListBox x:Name="SpeechList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1">
