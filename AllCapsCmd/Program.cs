@@ -15,11 +15,12 @@ namespace AllCaps
         {
             using (var capture = new WasapiLoopbackCapture())
             using (var stream = new WaveCaptureStream(capture))
-            using (ISpeechRecognizer eng = new LocalSpeechRecognizer(stream))
+            using (var local = new LocalSpeechRecognizer(stream))
             {
+                ISpeechRecognizer eng = local;
                 eng.SpeechRecognized += (snd, evt) =>
                 {
-                    Console.WriteLine($"{evt.Text}");
+                    Console.WriteLine($"[{evt.Result.Offset:hh\\:mm\\:ss}]: {evt.Result.Text}");
                 };
 
                 capture.StartRecording();

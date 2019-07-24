@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "liballcaps", "liballcaps\li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AllCapsCmd", "AllCapsCmd\AllCapsCmd.csproj", "{044CB8CD-CF15-4214-9A90-B53095D44048}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ALLCAPS", "ALLCAPS\ALLCAPS.csproj", "{68B90846-DACC-4D06-86DF-DFE19A07F4D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{044CB8CD-CF15-4214-9A90-B53095D44048}.Release|Any CPU.Build.0 = Release|Any CPU
 		{044CB8CD-CF15-4214-9A90-B53095D44048}.Release|x64.ActiveCfg = Release|x64
 		{044CB8CD-CF15-4214-9A90-B53095D44048}.Release|x64.Build.0 = Release|x64
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Debug|x64.Build.0 = Debug|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Release|x64.ActiveCfg = Release|Any CPU
+		{68B90846-DACC-4D06-86DF-DFE19A07F4D4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,51 @@
+﻿<Window x:Class="ALLCAPS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ALLCAPS"
+        mc:Ignorable="d"
+        Title="ALLCAPS" Height="216" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button FontFamily="{StaticResource FontAwesome}" Content="&#xf04c;" />
+                <Button FontFamily="{StaticResource FontAwesome}" Content="&#xf04d;" />
+                <Button FontFamily="{StaticResource FontAwesome}" Content="&#xf04b;" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button HorizontalAlignment="Right" FontFamily="{StaticResource FontAwesome}" Content="&#xf013;" />
+            </StackPanel>
+        </Grid>
+        <ListBox x:Name="SpeechList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:ObservableSpeechResult}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="5*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Offset, StringFormat='hh\\:mm\\:ss'}" Grid.Row="0" Grid.Column="0" />
+                        <TextBlock FontSize="20" Margin="20 0 0 0" Text="{Binding Text}" TextWrapping="WrapWithOverflow" Grid.Row="0" Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StatusBar Grid.Row="2">
+            <TextBlock FontFamily="{StaticResource FontAwesome}" Text="&#xf025;"/>
+            <TextBlock x:Name="Preview" Text="Hello World"/>
+        </StatusBar>
+    </Grid>
+</Window>

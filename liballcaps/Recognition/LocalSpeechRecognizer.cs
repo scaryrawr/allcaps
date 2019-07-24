@@ -15,15 +15,30 @@ namespace AllCaps.Recognition
         {
             this.recognizer = new SpeechRecognitionEngine();
             this.recognizer.LoadGrammar(new DictationGrammar());
+            this.resultId = Guid.NewGuid().ToString();
+            this.lockObj = new object();
 
             this.recognizer.SpeechRecognized += (sndr, evt) =>
             {
-                this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt));
+                string id = null;
+                lock (this.lockObj)
+                {
+                    id = this.resultId;
+                    this.resultId = Guid.NewGuid().ToString();
+                }
+
+                this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt, id));
             };
 
             this.recognizer.SpeechHypothesized += (snder, evt) =>
             {
-                this.SpeechPredicted?.Invoke(this, new RecognitionEventArgs(evt));
+                string id = null;
+                lock (this.lockObj)
+                {
+                    id = this.resultId;
+                }
+
+                this.SpeechPredicted?.Invoke(this, new RecognitionEventArgs(evt, id, DateTime.Now - this.startTime));
             };
 
             WaveStream audioStream = stream;
@@ -37,6 +52,7 @@ namespace AllCaps.Recognition
 
         public async Task StartAsync()
         {
+            this.startTime = DateTime.Now;
             this.recognizer.RecognizeAsync(RecognizeMode.Multiple);
         }
 
@@ -51,6 +67,9 @@ namespace AllCaps.Recognition
 
         #region IDisposable Support
         private bool isDisposed = false; // To detect redundant calls
+        private string resultId;
+        private DateTime startTime;
+        private readonly object lockObj;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -58,7 +77,7 @@ namespace AllCaps.Recognition
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
+                    this.recognizer.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

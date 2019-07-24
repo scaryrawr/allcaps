@@ -82,6 +82,7 @@
     <Compile Include="Recognition\ISpeechRecognizer.cs" />
     <Compile Include="Recognition\LocalSpeechRecognizer.cs" />
     <Compile Include="Recognition\RecognitionEventArgs.cs" />
+    <Compile Include="Recognition\RecognitionResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -3,6 +3,7 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace AllCaps.Recognition
         private readonly WaveStream stream;
         private readonly PushAudioInputStream pushStream;
         private readonly SpeechRecognizer recognizer;
+        private string resultId;
+        private readonly object lockObj;
         private CancellationTokenSource cancelTokenSource;
         private Task worker;
 
@@ -22,18 +25,39 @@ namespace AllCaps.Recognition
             this.stream = NormalizeStream(stream);
             this.pushStream = AudioInputStream.CreatePushStream();
             this.recognizer = new SpeechRecognizer(speechConfig, AudioConfig.FromStreamInput(this.pushStream));
+            this.resultId = Guid.NewGuid().ToString();
+            this.lockObj = new object();
+
             this.recognizer.Recognized += (snd, evt) =>
             {
-                this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt));
+                string id = null;
+                lock (this.lockObj)
+                {
+                    id = this.resultId;
+                    this.resultId = Guid.NewGuid().ToString();
+                }
+
+                this.SpeechRecognized?.Invoke(this, new RecognitionEventArgs(evt, id));
             };
 
             this.recognizer.Recognizing += (snd, evt) =>
             {
-                this.SpeechPredicted?.Invoke(this, new RecognitionEventArgs(evt));
+                string id = null;
+                lock (this.lockObj)
+                {
+                    id = this.resultId;
+                }
+
+                this.SpeechPredicted?.Invoke(this, new RecognitionEventArgs(evt, id));
+            };
+
+            this.recognizer.Canceled += (snd, evt) =>
+            {
+                Debug.Fail("lost recognizer");
             };
         }
 
-        private WaveStream NormalizeStream(WaveStream stream)
+        private static WaveStream NormalizeStream(WaveStream stream)
         {
             WaveStream audioStream = stream;
             if (audioStream.WaveFormat.BitsPerSample != 16)
@@ -67,39 +91,43 @@ namespace AllCaps.Recognition
         public async Task StopAsync()
         {
             await this.recognizer.StopContinuousRecognitionAsync();
+            this.cancelTokenSource?.Cancel();
+
             if (this.worker != null)
             {
-                this.cancelTokenSource?.Cancel();
                 await this.worker;
             }
         }
 
         private async Task PushStreamAsync(CancellationToken token)
         {
-            byte[] buffer = new byte[1000];
-            while (!token.IsCancellationRequested)
+            await Task.Run(() =>
             {
-                int read = this.stream.Read(buffer, 0, buffer.Length);
-                this.pushStream.Write(buffer, read);
-            }
+                byte[] buffer = new byte[1000];
+                while (!token.IsCancellationRequested)
+                {
+                    int read = this.stream.Read(buffer, 0, buffer.Length);
+                    this.pushStream.Write(buffer, read);
+                }
+            });
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool isDisposed = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!isDisposed)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
+                    this.recognizer.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
 
-                disposedValue = true;
+                isDisposed = true;
             }
         }
 
