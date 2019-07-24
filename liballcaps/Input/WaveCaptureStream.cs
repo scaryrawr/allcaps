@@ -58,24 +58,33 @@ namespace AllCaps.Input
         public override int Read(byte[] buffer, int offset, int count)
         {
             var token = this.cancellationTokenSource.Token;
-            int read = count;
+            int read = 0;
+            int origCount = count;
             var start = DateTime.Now;
             for (int x = 0; x < buffer.Length; ++x) { buffer[x] = 0; }
-            while (count > 0 && DateTime.Now - start < this.bufferTimeout && !token.IsCancellationRequested)
+            while (count > 0 && (DateTime.Now - start < this.bufferTimeout) && !token.IsCancellationRequested)
             {
                 if (this.carry != null)
                 {
                     // Make sure we can handle really large carry
+                    var len = this.carry.Length;
                     this.carry = BufferCopyWithCarry(buffer, ref offset, ref count, this.carry);
+                    read += len - this.carry?.Length ?? 0;
                 }
                 else if (this.buffer.TryDequeue(out byte[] buff))
                 {
                     this.carry = BufferCopyWithCarry(buffer, ref offset, ref count, buff);
+                    read += buff.Length - this.carry?.Length ?? 0;
                 }
                 else
                 {
                     Thread.Sleep(0);
                 }
+            }
+
+            if (DateTime.Now - start >= this.bufferTimeout || count == 0)
+            {
+                read = origCount;
             }
 
             return read;
