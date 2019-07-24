@@ -42,8 +42,8 @@ namespace ALLCAPS
 
         public async Task StopAsync()
         {
-            await this.recognizer.StopAsync();
             this.capture.StopRecording();
+            await this.recognizer.StopAsync();
         }
 
         #region IDisposable Support
