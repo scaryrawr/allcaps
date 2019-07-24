@@ -27,13 +27,13 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: CopyFiles@2
+- task: ArchiveFiles@2
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/ALLCAPS/bin/Release'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    CleanTargetFolder: true
-    OverWrite: true
+    rootFolderOrFile: '$(Build.SourcesDirectory)/ALLCAPS/bin/Release'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AllCaps.zip'
+    replaceExistingArchive: true
 
 - task: GitHubRelease@0
   inputs:
