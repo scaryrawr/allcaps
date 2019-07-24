@@ -1,4 +1,5 @@
 ﻿using AllCaps.Recognition;
+using Microsoft.VisualBasic;
 using NAudio.Wave;
 using System;
 using System.Collections.Concurrent;
@@ -21,20 +22,22 @@ namespace ALLCAPS
 
             this.Closing += async (snd, evt) =>
             {
-                await this.Recognizer.StopAsync();
+                await this.Recognizer.StopAsync().ConfigureAwait(false);
                 var hndl = this.Recognizer;
                 this.Recognizer = null;
                 hndl.Dispose();
             };
 
             this.Recognizer = new LoopbackRecognizer();
+            this.RecognizerLabel.Text = this.Recognizer.RecognizerName;
             this.Loaded += async (snd, evt) =>
             {
-                await this.Recognizer.StartAsync();
+                await this.Recognizer.StartAsync().ConfigureAwait(false);
             };
         }
 
         private ISpeechRecognizer recognizer;
+        private string configString;
         private readonly ConcurrentDictionary<string, ObservableSpeechResult> inProgress;
 
         public ISpeechRecognizer Recognizer
@@ -92,7 +95,7 @@ namespace ALLCAPS
                     this.SpeechList.ScrollIntoView(speechResult);
                 });
             }
-            catch (TaskCanceledException ex)
+            catch (TaskCanceledException)
             {
                 // expected for now.
             }
@@ -114,11 +117,65 @@ namespace ALLCAPS
                         }
                     });
                 }
-                catch (TaskCanceledException ex)
+                catch (TaskCanceledException)
                 {
                     // expected for now
                 }
             }
+        }
+
+        private void LaunchSettings(object sender, RoutedEventArgs e)
+        {
+            this.configString = Interaction.InputBox("Please input \"key,region\" leave empty for local:", "Use Azure Speech Recognition");
+
+            this.ResetSpeechRecognizer();
+        }
+
+        private void ResetSpeechRecognizer()
+        {
+            this.ClearSpeechRecognizer();
+
+            if (string.IsNullOrEmpty(this.configString))
+            {
+                this.Recognizer = new LoopbackRecognizer();
+            }
+            else
+            {
+                var parts = this.configString.Split(',');
+                this.Recognizer = new LoopbackRecognizer(parts[0], parts[1]);
+            }
+
+            Task.Run(async () =>
+            {
+                await this.Recognizer.StartAsync();
+            });
+
+            this.RecognizerLabel.Text = this.Recognizer.RecognizerName;
+        }
+
+        private void ClearSpeechRecognizer()
+        {
+            var temp = this.Recognizer;
+            this.Recognizer = null;
+
+            if (temp != null)
+            {
+                Task.Run(async () =>
+                {
+                    await temp.StopAsync();
+                    temp.Dispose();
+                });
+            }
+        }
+
+        private void OnPause(object sender, RoutedEventArgs e)
+        {
+            this.ClearSpeechRecognizer();
+        }
+
+        private void OnPlay(object sender, RoutedEventArgs e)
+        {
+            this.ResetSpeechRecognizer();
         }
     }
 }

@@ -53,7 +53,7 @@ namespace AllCaps.Recognition
 
             this.recognizer.Canceled += (snd, evt) =>
             {
-                Debug.Fail("lost recognizer");
+                Debug.WriteLine("lost recognizer");
             };
         }
 
@@ -84,18 +84,18 @@ namespace AllCaps.Recognition
         public async Task StartAsync()
         {
             this.cancelTokenSource = new CancellationTokenSource();
-            await this.recognizer.StartContinuousRecognitionAsync();
             this.worker = this.PushStreamAsync(this.cancelTokenSource.Token);
+            await this.recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
         }
 
         public async Task StopAsync()
         {
             this.cancelTokenSource?.Cancel();
-            await this.recognizer.StopContinuousRecognitionAsync();
+            await this.recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
 
             if (this.worker != null)
             {
-                await this.worker;
+                await this.worker.ConfigureAwait(false);
             }
         }
 
@@ -109,8 +109,10 @@ namespace AllCaps.Recognition
                     int read = this.stream.Read(buffer, 0, buffer.Length);
                     this.pushStream.Write(buffer, read);
                 }
-            });
+            }).ConfigureAwait(false);
         }
+
+        public string RecognizerName => nameof(AzureSpeechRecognizer);
 
         #region IDisposable Support
         private bool isDisposed = false; // To detect redundant calls

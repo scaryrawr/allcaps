@@ -27,5 +27,10 @@ namespace AllCaps.Recognition
         /// Stops the recognizer
         /// </summary>
         Task StopAsync();
+
+        /// <summary>
+        /// Gets a string name representing the recognizer
+        /// </summary>
+        string RecognizerName { get; }
     }
 }

@@ -12,7 +12,7 @@ namespace AllCaps.Input
         private readonly WasapiCapture capture;
         private readonly ConcurrentQueue<byte[]> buffer = new ConcurrentQueue<byte[]>();
         private byte[] carry;
-        private CancellationTokenSource cancellationTokenSource;
+        private readonly CancellationTokenSource cancellationTokenSource;
 
         public WaveCaptureStream(WasapiCapture capture) : this(capture, TimeSpan.FromMilliseconds(250))
         {
@@ -58,7 +58,6 @@ namespace AllCaps.Input
         public override int Read(byte[] buffer, int offset, int count)
         {
             var token = this.cancellationTokenSource.Token;
-            int read = 0;
             int origCount = count;
             var start = DateTime.Now;
             for (int x = 0; x < buffer.Length; ++x) { buffer[x] = 0; }
@@ -67,14 +66,11 @@ namespace AllCaps.Input
                 if (this.carry != null)
                 {
                     // Make sure we can handle really large carry
-                    var len = this.carry.Length;
                     this.carry = BufferCopyWithCarry(buffer, ref offset, ref count, this.carry);
-                    read += len - this.carry?.Length ?? 0;
                 }
                 else if (this.buffer.TryDequeue(out byte[] buff))
                 {
                     this.carry = BufferCopyWithCarry(buffer, ref offset, ref count, buff);
-                    read += buff.Length - this.carry?.Length ?? 0;
                 }
                 else
                 {
@@ -82,12 +78,8 @@ namespace AllCaps.Input
                 }
             }
 
-            if (DateTime.Now - start >= this.bufferTimeout || count == 0)
-            {
-                read = origCount;
-            }
-
-            return read;
+            // If we timed out, mark as fully read, otherwise we're exiting early, so return partial/full read
+            return (DateTime.Now - start > this.bufferTimeout) ? origCount : origCount - count;
         }
 
         private static byte[] BufferCopyWithCarry(byte[] buffer, ref int offset, ref int count, byte[] buff)

@@ -46,6 +46,8 @@ namespace ALLCAPS
             await this.recognizer.StopAsync();
         }
 
+        public string RecognizerName => this.recognizer.RecognizerName;
+
         #region IDisposable Support
         private bool isDisposed = false; // To detect redundant calls
 

@@ -65,11 +65,16 @@ namespace AllCaps.Recognition
 
         public event EventHandler<RecognitionEventArgs> SpeechPredicted;
 
+        private string resultId;
+
+        private DateTime startTime;
+
+        private readonly object lockObj;
+
+        public string RecognizerName => nameof(LocalSpeechRecognizer);
+
         #region IDisposable Support
         private bool isDisposed = false; // To detect redundant calls
-        private string resultId;
-        private DateTime startTime;
-        private readonly object lockObj;
 
         protected virtual void Dispose(bool disposing)
         {
