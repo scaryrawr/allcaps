@@ -1,9 +1,23 @@
 ﻿using AllCaps.Recognition;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AllCaps
 {
+    class Location
+    {
+        public int Row { get; set; }
+        public int Column { get; set; }
+    }
+    class ConsoleText
+    {
+        public string Text { get; set; }
+
+        public Location Location { get; set; }
+    }
+
     class Program
     {
         static async Task Main(string[] args)
@@ -12,15 +26,37 @@ namespace AllCaps
             var config = Console.ReadLine().Trim();
             using (var recognizer = CreateRecognizer(config))
             {
+                var recognitions = new Dictionary<string, ConsoleText>();
                 ISpeechRecognizer inst = recognizer;
                 inst.SpeechRecognized += (snd, evt) =>
                 {
-                    Console.Write($"\r[{evt.Result.Offset:hh\\:mm\\:ss}]: {evt.Result.Text}\r\n");
+                    var tmp = $"\r[{evt.Result.Offset:hh\\:mm\\:ss}]: {evt.Result.Text}\r\n";
+                    if (recognitions.TryGetValue(evt.ResultId, out var text))
+                    {
+                        UpdateDisplay(tmp, text);
+                        recognitions.Remove(evt.ResultId);
+                    }
                 };
 
                 inst.SpeechPredicted += (snd, evt) =>
                 {
-                    Console.Write($"\r[{evt.Result.Offset:hh\\:mm\\:ss}]: {evt.Result.Text}");
+                    string tmp = $"\r[{evt.Result.Offset:hh\\:mm\\:ss}]: {evt.Result.Text}\r\n";
+                    if (!recognitions.TryGetValue(evt.ResultId, out var text))
+                    {
+                        text = new ConsoleText
+                        {
+                            Text = tmp,
+                            Location = new Location
+                            {
+                                Column = Console.CursorLeft,
+                                Row = Console.CursorTop
+                            }
+                        };
+                    }
+
+                    UpdateDisplay(tmp, text);
+
+                    recognitions[evt.ResultId] = text;
                 };
 
                 await inst.StartAsync();
@@ -33,6 +69,19 @@ namespace AllCaps
 
                 await inst.StopAsync();
             }
+        }
+
+        private static void UpdateDisplay(string tmp, ConsoleText text)
+        {
+            // Clear?
+            Console.CursorLeft = text.Location.Column;
+            Console.CursorTop = text.Location.Row;
+            Console.Write(Enumerable.Repeat(' ', text.Text.Length).ToArray());
+
+            Console.CursorLeft = text.Location.Column;
+            Console.CursorTop = text.Location.Row;
+            Console.Write(tmp);
+            text.Text = tmp;
         }
 
         static ISpeechRecognizer CreateRecognizer(string config)
