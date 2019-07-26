@@ -1,13 +1,9 @@
 ﻿using NAudio.Wave;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AllCaps.Input
 {
-    public class DownsampleCaptureStream : WaveStream
+    public class DownsampleCaptureStream : EndlessWaveStream
     {
         public DownsampleCaptureStream(WaveStream stream)
         {
@@ -22,10 +18,6 @@ namespace AllCaps.Input
         private readonly WaveStream stream;
 
         public override WaveFormat WaveFormat { get; }
-
-        public override long Length => -1;
-
-        public override long Position { get => 0; set { } }
 
         public override int Read(byte[] buffer, int offset, int count)
         {

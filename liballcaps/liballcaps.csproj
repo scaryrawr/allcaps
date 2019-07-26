@@ -74,7 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Input\DownsampleCaptureStream.cs" />
+    <Compile Include="Input\EndlessWaveStream.cs" />
     <Compile Include="Input\MonoCaptureStream.cs" />
+    <Compile Include="Input\VoiceFilterCaptureStream.cs" />
     <Compile Include="Input\Wave32To16CaptureStream.cs" />
     <Compile Include="Input\WaveCaptureStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

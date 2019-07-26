@@ -10,7 +10,7 @@ namespace AllCaps.Input
         Right
     }
 
-    public class MonoCaptureStream : WaveStream
+    public class MonoCaptureStream : EndlessWaveStream
     {
         private readonly WaveStream stream;
 
@@ -35,10 +35,6 @@ namespace AllCaps.Input
         public MonoTransform MonoTransform { get; }
 
         public override WaveFormat WaveFormat { get; }
-
-        public override long Length => -1;
-
-        public override long Position { get => 0; set { } }
 
         public override int Read(byte[] buffer, int offset, int count)
         {

@@ -18,7 +18,7 @@ namespace AllCaps.Recognition
         public LoopbackRecognizer()
         {
             this.capture = new WasapiLoopbackCapture();
-            this.stream = new WaveCaptureStream(this.capture);
+            this.stream = new VoiceFilterCaptureStream(this.capture);
             this.recognizer = new LocalSpeechRecognizer(this.stream);
             this.recognizer.SpeechPredicted += (snd, evt) => this.SpeechPredicted?.Invoke(snd, evt);
             this.recognizer.SpeechRecognized += (snd, evt) => this.SpeechRecognized?.Invoke(snd, evt);
