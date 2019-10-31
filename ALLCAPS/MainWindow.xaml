@@ -5,47 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ALLCAPS"
         mc:Ignorable="d"
-        Title="ALLCAPS 🐱‍🐉" Height="216" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="100*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Click="OnPause" Margin="5 5 5 5" FontFamily="{StaticResource FontAwesome}" FontSize="20" Content="&#xf04c;" />
-                <Button Click="OnPlay" Margin="5 5 0 5" FontFamily="{StaticResource FontAwesome}" FontSize="20" Content="&#xf04b;" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Click="LaunchSettings" Margin="5 5 5 5" HorizontalAlignment="Right" FontSize="20" FontFamily="{StaticResource FontAwesome}" Content="&#xf013;" />
-            </StackPanel>
-        </Grid>
-        <ListBox x:Name="SpeechList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.Row="1">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:ObservableSpeechResult}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="5*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Offset, StringFormat='hh\\:mm\\:ss'}" Grid.Row="0" Grid.Column="0" />
-                        <TextBlock FontSize="20" Margin="20 0 0 0" Text="{Binding Text}" TextWrapping="WrapWithOverflow" Grid.Row="0" Grid.Column="1" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <StatusBar Grid.Row="2">
-            <TextBlock x:Name="RecognizerLabel" Text="Boop" />
-            <TextBlock FontFamily="{StaticResource FontAwesome}" Text="&#xf025;"/>
-            <TextBlock x:Name="Preview" Text="Hello World"/>
-        </StatusBar>
-    </Grid>
+        Title="ALLCAPS 🐱‍🐉"
+        Height="200"
+        Width="800"
+        WindowStyle="None"
+        Background="Transparent">
+    <Border CornerRadius="8">
+        <Border.Background>
+            <SolidColorBrush Color="Black" Opacity=".8" />
+        </Border.Background>
+        <TextBlock FontSize="20" Foreground="White" Margin="20 0 0 0" x:Name="Speech" TextWrapping="WrapWithOverflow" />
+    </Border>
 </Window>

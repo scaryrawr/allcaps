@@ -18,7 +18,6 @@ namespace ALLCAPS
         public MainWindow()
         {
             this.InitializeComponent();
-            this.inProgress = new ConcurrentDictionary<string, ObservableSpeechResult>();
 
             this.Closing += (snd, evt) =>
             {
@@ -33,7 +32,6 @@ namespace ALLCAPS
 
         private ISpeechRecognizer recognizer;
         private string configString;
-        private readonly ConcurrentDictionary<string, ObservableSpeechResult> inProgress;
 
         public ISpeechRecognizer Recognizer
         {
@@ -43,7 +41,7 @@ namespace ALLCAPS
                 // unregister callbacks if any
                 if (this.recognizer != null)
                 {
-                    this.recognizer.SpeechRecognized -= this.OnRecognition;
+                    //this.recognizer.SpeechRecognized -= this.OnRecognition;
                     this.recognizer.SpeechPredicted -= this.OnPrediction;
                 }
 
@@ -51,7 +49,7 @@ namespace ALLCAPS
 
                 if (this.recognizer != null)
                 {
-                    this.recognizer.SpeechRecognized += this.OnRecognition;
+                    //this.recognizer.SpeechRecognized += this.OnRecognition;
                     this.recognizer.SpeechPredicted += this.OnPrediction;
                 }
             }
@@ -64,58 +62,12 @@ namespace ALLCAPS
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    var temp = evt.Result.Text.Split(' ').Reverse().ToArray();
-                    int toTake = Math.Min(4, temp.Length);
-                    this.Preview.Text = $"{string.Join(" ", temp.Take(toTake).Reverse())}...";
-                    ObservableSpeechResult speechResult = null;
-                    if (this.inProgress.TryGetValue(evt.ResultId, out speechResult))
-                    {
-                        speechResult.Offset = evt.Result.Offset;
-                        speechResult.Text = $"{evt.Result.Text}...";
-                    }
-                    else
-                    {
-                        speechResult = new ObservableSpeechResult
-                        {
-                            Text = $"{evt.Result.Text}...",
-                            Offset = evt.Result.Offset
-                        };
-
-                        if (this.inProgress.TryAdd(evt.ResultId, speechResult))
-                        {
-                            this.SpeechList.Items.Add(speechResult);
-                        }
-                    }
-
-                    this.SpeechList.ScrollIntoView(speechResult);
+                    this.Speech.Text = evt.Result.Text;
                 });
             }
             catch (TaskCanceledException)
             {
                 // expected for now.
-            }
-        }
-
-        private void OnRecognition(object sender, RecognitionEventArgs evt)
-        {
-            if (!string.IsNullOrEmpty(evt.Result.Text.Trim()))
-            {
-                try
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        if (this.inProgress.TryRemove(evt.ResultId, out var updatable))
-                        {
-                            updatable.Offset = evt.Result.Offset;
-                            updatable.Text = evt.Result.Text;
-                            this.SpeechList.ScrollIntoView(updatable);
-                        }
-                    });
-                }
-                catch (TaskCanceledException)
-                {
-                    // expected for now
-                }
             }
         }
 
@@ -144,8 +96,6 @@ namespace ALLCAPS
             {
                 await this.Recognizer.StartAsync();
             });
-
-            this.RecognizerLabel.Text = this.Recognizer.RecognizerName;
         }
 
         private void ClearSpeechRecognizer()
