@@ -12,6 +12,7 @@ namespace ALLCAPS
     {
         private string text;
         private TimeSpan offset;
+        private TimeSpan duration;
 
         public string Text
         {
@@ -30,6 +31,16 @@ namespace ALLCAPS
             {
                 this.offset = value;
                 this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Offset)));
+            }
+        }
+
+        public TimeSpan Duration
+        {
+            get => this.duration;
+            set
+            {
+                this.duration = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Duration)));
             }
         }
 

@@ -64,30 +64,36 @@ namespace ALLCAPS
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    var temp = evt.Result.Text.Split(' ').Reverse().ToArray();
-                    int toTake = Math.Min(4, temp.Length);
-                    this.Preview.Text = $"{string.Join(" ", temp.Take(toTake).Reverse())}...";
-                    ObservableSpeechResult speechResult = null;
-                    if (this.inProgress.TryGetValue(evt.ResultId, out speechResult))
+                    if (this.inProgress.TryGetValue(evt.ResultId, out ObservableSpeechResult speechResult))
                     {
                         speechResult.Offset = evt.Result.Offset;
                         speechResult.Text = $"{evt.Result.Text}...";
+                        speechResult.Duration = evt.Result.Duration;
                     }
                     else
                     {
                         speechResult = new ObservableSpeechResult
                         {
                             Text = $"{evt.Result.Text}...",
-                            Offset = evt.Result.Offset
+                            Offset = evt.Result.Offset,
+                            Duration = evt.Result.Duration
                         };
-
-                        if (this.inProgress.TryAdd(evt.ResultId, speechResult))
-                        {
-                            this.SpeechList.Items.Add(speechResult);
-                        }
                     }
 
-                    this.SpeechList.ScrollIntoView(speechResult);
+                    // TODO: We need a better way to handle run-on sentences, but a moving window is... cray
+                    //// We only want to show the latest 3 seconds
+                    //if (speechResult.Duration > TimeSpan.FromSeconds(3))
+                    //{
+                    //    var percentage = TimeSpan.FromSeconds(3).TotalMilliseconds / speechResult.Duration.TotalMilliseconds;
+                    //    var words = speechResult.Text.Split(' ');
+                    //    speechResult.Text = "";
+                    //    for (int i = (int)(words.Length * (1 - percentage)); i < words.Length; ++i)
+                    //    {
+                    //        speechResult.Text += words[i] + ' ';
+                    //    }
+                    //}
+
+                    this.DataContext = speechResult;
                 });
             }
             catch (TaskCanceledException)
@@ -108,7 +114,6 @@ namespace ALLCAPS
                         {
                             updatable.Offset = evt.Result.Offset;
                             updatable.Text = evt.Result.Text;
-                            this.SpeechList.ScrollIntoView(updatable);
                         }
                     });
                 }
@@ -144,8 +149,6 @@ namespace ALLCAPS
             {
                 await this.Recognizer.StartAsync();
             });
-
-            this.RecognizerLabel.Text = this.Recognizer.RecognizerName;
         }
 
         private void ClearSpeechRecognizer()
@@ -171,6 +174,35 @@ namespace ALLCAPS
         private void OnPlay(object sender, RoutedEventArgs e)
         {
             this.ResetSpeechRecognizer();
+        }
+
+        bool mouseDown = false;
+        Point downPosition = new Point(0, 0);
+        private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            mouseDown = true;
+            downPosition = e.GetPosition(this);
+        }
+
+        private void Window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            mouseDown = false;
+        }
+
+        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!mouseDown)
+            {
+                return;
+            }
+            var position = e.GetPosition(this);
+            this.Left += position.X - downPosition.X;
+            this.Top += position.Y - downPosition.Y;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            this.Topmost = true;
         }
     }
 }
